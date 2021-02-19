@@ -3,7 +3,8 @@ import { Segment, Form, Input, Button } from 'semantic-ui-react';
 import _ from 'lodash';
 import { ContactContext } from './../contexts/contact-context';
 
-function useFormInput(initialValue) {
+// Function that composes the input handler
+const useInputHandler = function(initialValue) {
   const [value, setValue] = useState(initialValue);
 
   const handleChange = (e) => {
@@ -22,8 +23,8 @@ function useFormInput(initialValue) {
 }
 
 export default function ContactForm() {
-  const name = useFormInput('');
-  const email = useFormInput('');
+  const nameInputHandler = useInputHandler('');
+  const emailInputHandler = useInputHandler('');
   const [state, dispatch] = useContext(ContactContext);
 
   const onSubmit = () => {
@@ -31,12 +32,12 @@ export default function ContactForm() {
       type: 'ADD_CONTACT',
       payload: { 
         id: _.uniqueId(10), 
-        name: name.value,
-        email: email.value
+        name: nameInputHandler.value,
+        email: nameInputHandler.value
       }
     });
-    name.onReset();
-    email.onReset();
+    nameInputHandler.onReset();
+    nameInputHandler.onReset();
   };
 
   return (
@@ -44,10 +45,14 @@ export default function ContactForm() {
       <Form onSubmit={onSubmit}>
         <Form.Group widths="3">
           <Form.Field width={6}>
-            <Input placeholder="Enter Name" {...name} required />
+            {/* 
+              For better understanding of the use of the spread operator here, 
+              please check: https://reactjs.org/docs/jsx-in-depth.html#spread-attributes 
+            */}
+            <Input placeholder="Enter Name" {...nameInputHandler} required />
           </Form.Field>
           <Form.Field width={6}>
-            <Input placeholder="Enter Email" {...email} type="email" required />
+            <Input placeholder="Enter Email" {...emailInputHandler} type="email" required />
           </Form.Field>
           <Form.Field width={4}>
             <Button fluid primary>
